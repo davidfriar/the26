@@ -38,21 +38,22 @@ points:
         top:
     thumbs:
       key:
-        padding: 1ky
-        spread: 1kx
+        padding: 1kx # note that keys are rotated so switching x and y
+        spread: 1ky
       anchor:
         ref: fingers_middle_bottom
-        shift: [0, -2ky]
+        shift: [kx+0.5, -2ky]
       columns:
-        num:
         inner:
           key:
             tags: large
-            height: 1.5ky
+            width: 1.5kx
+            orient: 90
         outer:
           key:
             tags: large
-            height: 1.5ky
+            width: 1.5kx
+            orient: 90
       rows:
         thumb:
   mirror: &mirror
@@ -65,7 +66,7 @@ outlines:
       size: [kx-0.5, ky-0.5]
     - what: rectangle
       where: large
-      size: [kx-0.5, 1.5ky-0.5]
+      size: [1.5kx-0.5, ky-0.5]
   padded_keys:
     small:
       what: rectangle
@@ -74,16 +75,16 @@ outlines:
     large:
       what: rectangle
       where: large
-      size: [px, 1.5ky+2p]
+      size: [1.5px + 2p, py]
   left_padded_keys:
     small:
       what: rectangle
-      where: [[-large, /^fingers.*/]]
+      where: [[-large, /^(fingers|thumbs).*/]]
       size: [px, px]
     large:
       what: rectangle
-      where: [[large, /^fingers.*/]]
-      size: [px, 1.5ky+2p]
+      where: [[large, /^(fingers|thumbs).*/]]
+      size: [1.5kx + 2p, py]
   right_padded_keys:
     small:
       what: rectangle
@@ -92,7 +93,7 @@ outlines:
     large:
       what: rectangle
       where: [[large, /^mirror.*/]]
-      size: [px, 1.5ky+2p]
+      size: [1.5kx + 2p, py]
   left_filler:
     - what: polygon
       points:
@@ -101,9 +102,9 @@ outlines:
         - ref: fingers_middle_bottom
           shift: [2.5kx + p, 0]
         - ref: fingers_middle_bottom
-          shift: [2.5kx + p, -2.75ky-p]
+          shift: [2.5kx + p, -2.75ky-p-1]
         - ref: fingers_middle_bottom
-          shift: [-2.5kx - p, -2.75ky-p]
+          shift: [-2.5kx - p, -2.75ky-p-1]
   right_filler:
     - what: polygon
       points:
@@ -112,9 +113,9 @@ outlines:
         - ref: mirror_fingers_middle_bottom
           shift: [2.5kx + p, 0]
         - ref: mirror_fingers_middle_bottom
-          shift: [2.5kx + p, -2.75ky-p]
+          shift: [2.5kx + p, -2.75ky-p-1]
         - ref: mirror_fingers_middle_bottom
-          shift: [-3.5kx - p, -2.75ky-p]
+          shift: [-3.5kx - p, -2.75ky-p-1]
   _right_board:
     keys:
       name: right_padded_keys
