@@ -1,0 +1,203 @@
+units:
+  kx: cx
+  ky: cy
+  p: 2
+  # Padded
+  px: kx + 2p
+  py: ky + 2p
+  pinky_stagger: ky*1/8
+  ring_stagger: ky*4/8
+  middle_stagger: ky*1/8
+  index_stagger: -ky*2/8
+  inner_stagger: -ky*2/8
+  offset_x: 100
+  offset_y: -100
+points:
+  key:
+    width: kx
+    height: ky
+  zones:
+    fingers:
+      anchor:
+        shift: [offset_x-kx/2, offset_y-(1.5ky+pinky_stagger+ring_stagger+middle_stagger)]
+      key:
+        padding: 1ky
+        spread: 1kx
+      columns:
+        ext:
+          key:
+            asym: clone
+            column_net: C0
+        pinky:
+          key:
+            stagger: pinky_stagger
+            column_net: C1
+        ring:
+          key:
+            stagger: ring_stagger
+            column_net: C2
+        middle:
+          key:
+            stagger: middle_stagger
+            column_net: C3
+        index:
+          key:
+            stagger: index_stagger
+            column_net: C4
+        inner:
+          key:
+            stagger: inner_stagger
+            column_net: C5
+      rows:
+        bottom:
+          row_net: R2
+        top:
+          row_net: R1
+    thumbs:
+      key:
+        padding: 1kx # note that keys are rotated so switching x and y
+        spread: 1ky
+      anchor:
+        ref: fingers_middle_bottom
+        shift: [kx+0.5, -2ky]
+      columns:
+        outer:
+          key:
+            tags: large
+            width: 1.5kx
+            orient: -90
+            column_net: C4
+        inner:
+          key:
+            tags: large
+            width: 1.5kx
+            orient: -90
+            column_net: C5
+      rows:
+        thumb:
+          row_net: R3
+  mirror: &mirror
+    ref: fingers_inner_top
+    distance: 2.5kx
+outlines:
+  keys:
+    - what: rectangle
+      where: -large
+      size: [kx-0.5, ky-0.5]
+    - what: rectangle
+      where: large
+      size: [1.5kx-0.5, ky-0.5]
+  keypoints:
+    - what: circle
+      where: true
+      radius: 1
+  left_board:
+    - what: rectangle
+      where: /^(fingers).*/
+      size: [kx, ky]
+    - what: rectangle
+      where: fingers_index_bottom
+      size: [2kx, 2.5ky+1.5]
+      adjust:
+        shift: [0.5kx, -1.25ky]
+    - what: rectangle
+      where: fingers_ring_bottom
+      size: [kx, 0.5ky]
+      adjust:
+        shift: [0, -0.75ky]
+      fillet: 1
+  left_plate:
+    - what: rectangle
+      where: /^(fingers).*/
+      size: [px, py]
+    - what: rectangle
+      where: fingers_index_bottom
+      size: [2kx+2p, 2.5ky+1.5+2p]
+      adjust:
+        shift: [0.5kx, -1.25ky]
+      fillet: 1
+    - what: rectangle
+      where: /^(thumbs|fingers).*/
+      size: [14, 14]
+      operation: subtract
+  right_plate:
+    - what: rectangle
+      where: /^(mirror_fingers).*/
+      size: [px, py]
+    - what: rectangle
+      where: mirror_fingers_index_bottom
+      size: [2kx+2p, 2.5ky+1.5+2p]
+      adjust:
+        shift: [0.5kx, -1.25ky]
+      fillet: 1
+    - what: rectangle
+      where: /^(mirror.thumbs|mirror.fingers).*/
+      size: [14, 14]
+      operation: subtract
+  combo:
+    - name: left_plate
+    - operation: stack
+      name: left_board
+    - operation: stack
+      name: keys
+pcbs:
+  left_pcb:
+    outlines:
+      main:
+        outline: left_board
+    footprints:
+      switch:
+        what: choc
+        where: /^(fingers|thumbs).*/
+        params:
+          keycaps: true
+          reverse: false
+          hotswap: false
+          from: "{{column_net}}"
+          to: "{{colrow}}"
+      diode:
+        what: smdDiode
+        where: /^(fingers|thumbs).*/
+        params:
+          side: B
+          from: "{{colrow}}"
+          to: "{{row_net}}"
+        adjust:
+          shift: [0, -5]
+      connector:
+        what: gctConnector
+        where: fingers_ring_bottom
+        adjust:
+          shift: [0, -0.75ky]
+        params:
+          p1: GND
+          p2: R1
+          p3: R2
+          p4: R3
+          p5: C0
+          p6: C1
+          p7: C2
+          p8: C3
+          p9: C4
+          p10: C5
+      via1:
+        what: via
+        where: fingers_ring_bottom
+        adjust:
+          shift: [-2, -(ky-2)]
+        params:
+          net: R1
+      via2:
+        what: via
+        where: fingers_ring_bottom
+        adjust:
+          shift: [0, -(ky-2)]
+        params:
+          net: R2
+      via3:
+        what: via
+        where: fingers_ring_bottom
+        adjust:
+          shift: [2, -(ky-2)]
+        params:
+          net: R3
