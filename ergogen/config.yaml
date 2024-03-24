@@ -106,6 +106,21 @@ outlines:
       adjust:
         shift: [0, -0.75ky]
       fillet: 1
+  right_board:
+    - what: rectangle
+      where: /^(mirror_fingers).*/
+      size: [kx, ky]
+    - what: rectangle
+      where: mirror_fingers_index_bottom
+      size: [2kx, 2.5ky+1.5]
+      adjust:
+        shift: [0.5kx, -1.25ky]
+    - what: rectangle
+      where: mirror_fingers_ring_bottom
+      size: [kx, 0.5ky]
+      adjust:
+        shift: [0, -0.75ky]
+      fillet: 1
   left_plate:
     - what: rectangle
       where: /^(fingers).*/
@@ -138,6 +153,10 @@ outlines:
     - name: left_plate
     - operation: stack
       name: left_board
+    - operation: stack
+      name: right_plate
+    - operation: stack
+      name: right_board
     - operation: stack
       name: keys
 pcbs:
@@ -197,6 +216,66 @@ pcbs:
       via3:
         what: via
         where: fingers_ring_bottom
+        adjust:
+          shift: [2, -(ky-2)]
+        params:
+          net: R3
+  right_pcb:
+    outlines:
+      main:
+        outline: right_board
+    footprints:
+      switch:
+        what: choc
+        where: /^mirror.*/
+        params:
+          keycaps: true
+          reverse: false
+          hotswap: false
+          from: "{{column_net}}"
+          to: "{{colrow}}"
+      diode:
+        what: smdDiode
+        where: /^mirror.*/
+        params:
+          side: B
+          from: "{{colrow}}"
+          to: "{{row_net}}"
+        adjust:
+          shift: [0, -5]
+      connector:
+        what: gctConnector
+        where: mirror_fingers_ring_bottom
+        adjust:
+          shift: [0, -0.75ky]
+        params:
+          p1: GND
+          p2: R1
+          p3: R2
+          p4: R3
+          p5: C0
+          p6: C1
+          p7: C2
+          p8: C3
+          p9: C4
+          p10: C5
+      via1:
+        what: via
+        where: mirror_fingers_ring_bottom
+        adjust:
+          shift: [-2, -(ky-2)]
+        params:
+          net: R1
+      via2:
+        what: via
+        where: mirror_fingers_ring_bottom
+        adjust:
+          shift: [0, -(ky-2)]
+        params:
+          net: R2
+      via3:
+        what: via
+        where: mirror_fingers_ring_bottom
         adjust:
           shift: [2, -(ky-2)]
         params:

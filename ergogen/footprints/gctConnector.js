@@ -88,7 +88,7 @@ module.exports = {
     (solder_mask_margin 0.102) )
   (pad "S2" smd rect (at 3.2 1.25 180) (size 0.4 0.8) (layers "F.Cu" "F.Paste" "F.Mask")
     (solder_mask_margin 0.102) )
-  (model \${ERGOGEN_MODELS}/FFC2B28-10-G.step
+  (model \${ERGOGEN_MODELS}/FFC2B28-10-G.stp
     (offset (xyz 0 0 0))
     (scale (xyz 1 1 1))
     (rotate (xyz -90 0 0))
