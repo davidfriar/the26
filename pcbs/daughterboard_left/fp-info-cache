@@ -1,4 +1,4 @@
-22353152165029441
+22354864001765419
 Audio_Module
 Reverb_BTDR-1H
 Digital Reverberation Unit, http://www.belton.co.kr/inc/downfile.php?seq=17&file=pdf (footprint from http://www.uk-electronic.de/PDF/BTDR-1.pdf)
@@ -83744,6 +83744,13 @@ Relay_THT
 Relay_StandexMeder_UMS
 Standex-Meder SIL-relais, UMS, see http://cdn-reichelt.de/documents/datenblatt/C300/UMS05_1A80_75L_DB.pdf
 Standex Meder SIL reed relais
+0
+4
+4
+ResetSwitch
+430471035826
+<B>WS-TASV</B><BR>SMT Washable Tact Switch 6x6 mm ,4 pins
+
 0
 4
 4

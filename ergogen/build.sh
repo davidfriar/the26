@@ -15,4 +15,6 @@ python ../utils/convert3d/stepToSTL.py -d -o ../case ../case/daughterboard_right
 
 cp output/outlines/left_plate.svg ../case/
 cp output/outlines/right_plate.svg ../case/
+cp output/outlines/left_board.svg ../case/left_pcb.svg
+cp output/outlines/right_board.svg ../case/right_pcb.svg
 ./generateOpenScad.sh > ../case/keys.scad
