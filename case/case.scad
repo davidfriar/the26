@@ -3,8 +3,8 @@ include<BOSL2/std.scad>;
 include <BOSL2/fnliterals.scad>;
 include <BOSL2/rounding.scad>;
 include<keys.scad>;
-include<left_pcb_dimensions.scad>;
-include<right_pcb_dimensions.scad>;
+include<pcbs/left_pcb_dimensions.scad>;
+include<pcbs/right_pcb_dimensions.scad>;
 
 // clang-format on
 $fn = 32;
@@ -122,8 +122,8 @@ module case(){
   //basic_shape();
   case_base();
   up(bottom_gasket_height) gaskets(); 
-  *up(plate_height)plate();
-  *up(top_gasket_height) gaskets(); 
+  up(plate_height)plate();
+  up(top_gasket_height) gaskets(); 
   *new_lid();
 }
 
@@ -360,7 +360,7 @@ module layout(points, center) {
 
   module daughterboard() {
     rotation = is_left() ? 0 : 180;
-    rot(rotation) import("daughterboard_left_pcb.stl");
+    rot(rotation) import("pcbs/daughterboard_pcb.stl");
   }
 
   module battery() {
@@ -454,8 +454,8 @@ function pcb_size() = is_left() ? left_pcb_size : right_pcb_size;
 function pcb_center() = 
    let(size = pcb_size())
    [size.x/2, size.y/2];
-function pcb_svg() = is_left()? "left_pcb.svg" : "right_pcb.svg";
-function pcb_stl() = is_left()? "left_pcb.stl" : "right_pcb.stl";
+function pcb_svg() = is_left()? "pcbs/left_pcb.svg" : "pcbs/right_pcb.svg";
+function pcb_stl() = is_left()? "pcbs/left_pcb.stl" : "pcbs/right_pcb.stl";
 
 function corner_points() =  [
     back(kx,inwards(kx,inner_top())), 

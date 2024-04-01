@@ -1,0 +1,4 @@
+(sym_lib_table
+  (version 7)
+  (lib (name "nice_nano")(type "Legacy")(uri "/home/david/projects/the28/pcbs/lib/symbols/nice_nano.lib")(options "")(descr ""))
+)
