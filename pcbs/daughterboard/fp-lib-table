@@ -2,4 +2,5 @@
   (version 7)
   (lib (name "nice_nano")(type "KiCad")(uri "/home/david/projects/the28/pcbs/lib/footprints/nice_nano.pretty")(options "")(descr ""))
   (lib (name "connector")(type "KiCad")(uri "/home/david/projects/the28/pcbs/lib/footprints/connector.pretty")(options "")(descr ""))
+  (lib (name "art")(type "KiCad")(uri "/home/david/projects/the28/pcbs/lib/footprints/art.pretty")(options "")(descr ""))
 )

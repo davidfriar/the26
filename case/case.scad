@@ -30,6 +30,7 @@ pcb_offset_y = 2.5;
 gasket_width = 3.5;
 gasket_length = 1.5 * kx;
 gasket_thickness = 1.9; // gasket thickness when compressed
+gasket_tab_width = 4;
 
 insert_hole_diameter = 3.2;
 insert_hole_depth = 4.25;
@@ -43,33 +44,34 @@ bottom_gasket_height = base_thickness;
 plate_height = bottom_gasket_height + gasket_thickness;
 top_gasket_height = plate_height + plate_thickness;
 
-all();
-// daughterboard();
-// new_lid();
-// battery();
+// all();
 
-// case_base();
-//  pcb_hole();
-//  pcb();
-//  plate();
-//   gasket();
+module all() {
+  left(100) left_case();
+  right(100) right_case();
+}
 
-// left_plate();
-// gasket_tab();
-// need a real value for this by measuring keycaps
-// left_case();
-// test();
-// thumb_row_keycap_left();
-// left_plate();
-//    right_plate();
-//    left_pcb();
-// right_pcb();
-// left_keycaps();
-//  right_keycaps();
-// daughterboard_left();
-// daughterboard_right();
-// new_plate();
-module new_lid() {
+module left_case() {
+  $side = "left";
+  case();
+}
+
+module right_case() {
+  $side = "right";
+  case();
+}
+
+module case(){
+  *case_base();
+  *up(bottom_gasket_height) gaskets(); 
+  up(plate_height)plate();
+  up(plate_height - (plate_gap + pcb_thickness)) pcb();
+  up(top_gasket_height) gaskets(); 
+  case_lid();
+}
+
+
+module case_lid() {
   difference() {
     union() {
       difference() {
@@ -90,74 +92,6 @@ module new_lid() {
     }
     down(infinitesmal) up(base_thickness) insert_holes();
   }
-}
-
-// up(infinitesmal) color("green") keys_hole_outline();
-// color("red") fillet(1) offset(r = gasket_width) pcb_hole_2d();
-// case_lid();
-
-module all() {
-  left(100) left_case();
-  right(100) right_case();
-}
-
-module left_case() {
-  $side = "left";
-  case();
-  // fwd(1.5*ky + 2 ) left(1.5*kx+6) daughterboard();
-}
-
-module right_case() {
-  $side = "right";
-  case();
-
-}
-
-module case(){
-  // gaskets();
-  // up(gasket_thickness) plate();
-  // up(gasket_thickness + plate_thickness) gaskets();
-  // color("red") layout_holes();
-  //base2d();
-  //basic_shape();
-  case_base();
-  up(bottom_gasket_height) gaskets(); 
-  up(plate_height)plate();
-  up(top_gasket_height) gaskets(); 
-  *new_lid();
-}
-
-// module basic_shape(){
-//   j = rounding_joint;
-//   start = inwards(j, last(corner_points()));
-//   mid = back(kx, middle_top());
-//   end = outwards(j, corner_points()[0]);
-//   
-//   rounded = round_corners(concat([end], corner_points(), [start]), k = rounding_k, joint = j-0.00001, method = "smooth", closed = false);
-//   
-//   controls = is_left() ? 
-//     [[start.x + kx,start.y], [start.x + kx, mid.y], [end.x - kx, mid.y], [end.x - kx, end.y]  ] :
-//     [[start.x - 2 * kx, start.y], [start.x - 2 * kx, mid.y],
-//      [end.x + kx, mid.y], [end.x + kx, end.y]];
-//
-//     curve1 = bezier_curve([ start, controls[0], controls[1], mid ],
-//                           endpoint = false);
-//     curve2 = bezier_curve([ mid, controls[2], controls[3], end ]);
-//     path = concat(curve1, curve2, slice(rounded, 1));
-//
-//     center = center(key_points());
-//     move(-center) { color("purple") stroke(path); }
-//   }
-
-module case_lid() { 
- color("darkslategrey") difference(){
-   case_lid_outside();
-   case_lid_inside();
-   keys_holes();
-   up(top_gasket_height) gaskets(); 
- }
-   up(top_gasket_height+gasket_thickness) gaskets(); 
-   up(base_thickness) insert_hole_mounts();
 }
 
 module case_lid_inside(case_thickness=2){
@@ -198,9 +132,6 @@ module insert_hole_mount(){
 module insert_hole(){
    cylinder(h=insert_hole_depth, d=insert_hole_diameter);
 }
-
-
-
 
 module case_base(){
   color("darkslategrey"){
@@ -270,7 +201,6 @@ module layout(points, center) {
         plate_holes();
       }
     }
-    down(plate_gap + pcb_thickness) pcb();
   }
 
   module insert_mount_clearance() {
@@ -295,41 +225,68 @@ module layout(points, center) {
 
   module plate_holes() { layout(key_points()) square(14, 14); }
 
-  module gasket_tab(width = kx + 4, height = 4) {
-    square([ width, height ], center = true);
+  // module gasket_tab(width = kx + 4, height = 4) {
+  //   square([ width, height ], center = true);
+  // }
+  //
+  // module gasket_tabs() { layout_gaskets() gasket_tab(); }
+  //
+  // module gasket() {
+  //   $fn = 32;
+  //   r = gasket_width / 2;
+  //   color("blue") linear_extrude(gasket_thickness) {
+  //     hull() {
+  //       left(gasket_length / 2 - r) circle(r);
+  //       right(gasket_length / 2 - r) circle(r);
+  //     }
+  //   }
+  // }
+  //
+  // module gaskets() { layout_gaskets(3.75) gasket(); }
+  //
+  // module layout_gaskets(d = 2) {
+  //   layout([midpoint(thumb_row())], center(key_points())) {
+  //     fwd(.75 * kx + d) children();
+  //     back(kx / 8) inwards(kx + d) zrot(90) children();
+  //     back(kx / 8) outwards(kx + d) zrot(90) children();
+  //   }
+  //   layout([midpoint([ inner_top(), inner_bottom() ])], center(key_points()))
+  //   {
+  //     inwards(kx / 2 + d) back(2) zrot(90) children();
+  //   }
+  //   layout([midpoint([ outermost_top(), outermost_bottom() ])],
+  //          center(key_points())) {
+  //     outwards(kx / 2 + d) zrot(90) children();
+  //   }
+  //   layout([middle_top()], center(key_points())) {
+  //     back(kx / 2 + d - 0.25) children();
+  //   }
+  // }
+
+  module gaskets() {
+    for (g = gaskets(3.75)) {
+      move(g[0]) rot(g[1]) gasket(g[2]);
+    }
   }
 
-  module gasket_tabs() { layout_gaskets() gasket_tab(); }
-
-  module gasket() {
-    $fn = 32;
+  module gasket(length) {
     r = gasket_width / 2;
-    color("blue") linear_extrude(gasket_thickness) {
+    color("purple") linear_extrude(gasket_thickness) {
       hull() {
-        left(gasket_length / 2 - r) circle(r);
-        right(gasket_length / 2 - r) circle(r);
+        left(length / 2 - r) circle(r);
+        right(length / 2 - r) circle(r);
       }
     }
   }
 
-  module gaskets() { layout_gaskets(3.75) gasket(); }
+  module gasket_tabs() {
+    for (g = gaskets(2)) {
+      move(g[0]) rot(g[1]) gasket_tab(g[2] - 4);
+    }
+  }
 
-  module layout_gaskets(d = 2) {
-    layout([midpoint(thumb_row())], center(key_points())) {
-      fwd(.75 * kx + d) children();
-      back(kx / 8) inwards(kx + d) zrot(90) children();
-      back(kx / 8) outwards(kx + d) zrot(90) children();
-    }
-    layout([midpoint([ inner_top(), inner_bottom() ])], center(key_points())) {
-      inwards(kx / 2 + d) back(2) zrot(90) children();
-    }
-    layout([midpoint([ outermost_top(), outermost_bottom() ])],
-           center(key_points())) {
-      outwards(kx / 2 + d) zrot(90) children();
-    }
-    layout([middle_top()], center(key_points())) {
-      back(kx / 2 + d - 0.25) children();
-    }
+  module gasket_tab(length, width = gasket_tab_width) {
+    square([ length, width ], center = true);
   }
 
   module layout_holes() {
@@ -463,6 +420,27 @@ function corner_points() =  [
     fwd(kx,outwards(kx,outer_bottom_corner())), 
     back(kx*9/8,outwards(kx,[outermost_top().x, pinky_top().y])),
   ];
+
+
+
+trans = function(g)  [move(-center(key_points()), g[0]), g[1], g[2]];
+
+function gaskets(gasket_offset) =
+let (
+  d = gasket_offset,
+  gaskets = [
+    [fwd(0.75*kx + d, midpoint(thumb_row())), 0, gasket_length ],
+    [outwards(kx+d ,back(kx/8, midpoint(thumb_row()))), 90, gasket_length ],
+    [inwards(kx+d ,back(kx/8, midpoint(thumb_row()))), 90, gasket_length ],
+    [inwards(kx/2+d ,back(2, midpoint([inner_top(), inner_bottom()]))), 90, gasket_length ],
+    [outwards(kx/2+d , midpoint([outermost_top(), outermost_bottom()])), 90, gasket_length ],
+    [back(kx/2+d - 0.25, middle_top()), 0, gasket_length/2 ],
+  ]
+)
+map(trans, gaskets);
+
+
+
 
 function basic_shape() = 
   let (

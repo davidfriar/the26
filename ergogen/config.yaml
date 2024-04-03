@@ -27,27 +27,32 @@ points:
         ext:
           key:
             asym: clone
-            column_net: C0
+            mirror_column_net: C6
         pinky:
           key:
             stagger: pinky_stagger
             column_net: C1
+            mirror_column_net: C5
         ring:
           key:
             stagger: ring_stagger
             column_net: C2
+            mirror_column_net: C4
         middle:
           key:
             stagger: middle_stagger
             column_net: C3
+            mirror_column_net: C3
         index:
           key:
             stagger: index_stagger
             column_net: C4
+            mirror_column_net: C2
         inner:
           key:
             stagger: inner_stagger
             column_net: C5
+            mirror_column_net: C1
       rows:
         bottom:
           row_net: R2
@@ -67,12 +72,14 @@ points:
             width: 1.5kx
             orient: -90
             column_net: C4
+            mirror_column_net: C2
         inner:
           key:
             tags: large
             width: 1.5kx
             orient: -90
             column_net: C5
+            mirror_column_net: C1
       rows:
         thumb:
           row_net: R3
@@ -193,19 +200,19 @@ pcbs:
           p2: R1
           p3: R2
           p4: R3
-          p5: C0
-          p6: C1
-          p7: C2
-          p8: C3
-          p9: C4
-          p10: C5
+          p5: C1
+          p6: C2
+          p7: C3
+          p8: C4
+          p9: C5
+          p10: C6
       via1:
         what: via
         where: fingers_ring_bottom
         adjust:
           shift: [-2, -(ky-2)]
         params:
-          net: R1
+          net: R3
       via2:
         what: via
         where: fingers_ring_bottom
@@ -219,7 +226,7 @@ pcbs:
         adjust:
           shift: [2, -(ky-2)]
         params:
-          net: R3
+          net: R1
   right_pcb:
     outlines:
       main:
@@ -232,7 +239,7 @@ pcbs:
           keycaps: true
           reverse: false
           hotswap: false
-          from: "{{column_net}}"
+          from: "{{mirror_column_net}}"
           to: "{{colrow}}"
       diode:
         what: smdDiode
@@ -253,19 +260,19 @@ pcbs:
           p2: R1
           p3: R2
           p4: R3
-          p5: C0
-          p6: C1
-          p7: C2
-          p8: C3
-          p9: C4
-          p10: C5
+          p5: C1
+          p6: C2
+          p7: C3
+          p8: C4
+          p9: C5
+          p10: C6
       via1:
         what: via
         where: mirror_fingers_ring_bottom
         adjust:
           shift: [-2, -(ky-2)]
         params:
-          net: R1
+          net: R3
       via2:
         what: via
         where: mirror_fingers_ring_bottom
@@ -279,4 +286,4 @@ pcbs:
         adjust:
           shift: [2, -(ky-2)]
         params:
-          net: R3
+          net: R1
