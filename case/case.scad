@@ -44,7 +44,7 @@ bottom_gasket_height = base_thickness;
 plate_height = bottom_gasket_height + gasket_thickness;
 top_gasket_height = plate_height + plate_thickness;
 
-// all();
+all();
 
 module all() {
   left(100) left_case();

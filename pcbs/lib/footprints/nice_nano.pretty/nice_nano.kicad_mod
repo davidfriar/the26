@@ -133,7 +133,7 @@
   (pad "22" thru_hole circle (at -4.89 7.62 180) (size 1.7526 1.7526) (drill 1.0922) (layers "*.Cu" "*.Mask" "F.SilkS") (tstamp 85bf956d-dc49-4be7-a752-2822084d3ec6))
   (pad "23" thru_hole circle (at -7.43 7.62 180) (size 1.7526 1.7526) (drill 1.0922) (layers "*.Cu" "*.Mask" "F.SilkS") (tstamp db6482ae-1592-4184-b9db-d2ce39f0e66f))
   (pad "24" thru_hole circle (at -9.97 7.62 180) (size 1.7526 1.7526) (drill 1.0922) (layers "*.Cu" "*.Mask" "F.SilkS") (tstamp 1812e1bd-22b6-41d8-aefe-a2eebc1d1013))
-  (model "/home/david/projects/the28/pcbs/lib/3dmodels/nice_nano.step"
+  (model "/home/david/projects/the26/pcbs/lib/3dmodels/nice_nano.step"
     (offset (xyz 2.54 0 3.2))
     (scale (xyz 1 1 1))
     (rotate (xyz 0 180 -90))

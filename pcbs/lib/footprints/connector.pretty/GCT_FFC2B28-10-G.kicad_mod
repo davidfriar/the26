@@ -69,7 +69,7 @@
     (solder_mask_margin 0.102) (tstamp c9b7a359-1af8-496e-85c6-663267654d28))
   (pad "S2" smd rect (at 3.2 1.25) (size 0.4 0.8) (layers "F.Cu" "F.Paste" "F.Mask")
     (solder_mask_margin 0.102) (tstamp 22c7e107-59df-49d9-9b93-d6fcb488d5d1))
-  (model "/home/david/projects/the28/pcbs/lib/3dmodels/FFC2B28-10-G.step"
+  (model "/home/david/projects/the26/pcbs/lib/3dmodels/FFC2B28-10-G.step"
     (offset (xyz 0 0 0))
     (scale (xyz 1 1 1))
     (rotate (xyz -90 0 0))

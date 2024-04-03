@@ -264,7 +264,7 @@
       (net 10 "GND") (pinfunction "GND") (pintype "input") (tstamp cd5e7b4a-fe2b-4ca8-bd5a-8a9fe512670f))
     (pad "24" thru_hole circle (at -9.97 7.62 180) (size 1.7526 1.7526) (drill 1.0922) (layers "*.Cu" "*.Mask" "F.SilkS")
       (net 11 "B+") (pinfunction "BATIN/P0.04") (pintype "input") (tstamp 7264d40f-2fea-43bd-a570-f4dc867b390d))
-    (model "/home/david/projects/the28/pcbs/lib/3dmodels/nice_nano.step"
+    (model "/home/david/projects/the26/pcbs/lib/3dmodels/nice_nano.step"
       (offset (xyz 2.54 0 3.2))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 180 -90))
@@ -428,7 +428,7 @@
       (net 10 "GND") (pintype "passive") (solder_mask_margin 0.102) (tstamp e14ef631-22d5-4512-9cdc-9ec34eccf645))
     (pad "4" smd rect (at 3.5 -2) (size 2 1.4) (layers "B.Cu" "B.Paste" "B.Mask")
       (net 24 "unconnected-(S1-Pad4)") (pintype "passive") (solder_mask_margin 0.102) (tstamp f25ec968-c59b-440a-bbfb-af4a5695597b))
-    (model "/home/david/projects/the28/pcbs/lib/3dmodels/430471035826_Download_STP_WS-TASV_430471035826_rev1.stp"
+    (model "/home/david/projects/the26/pcbs/lib/3dmodels/430471035826_Download_STP_WS-TASV_430471035826_rev1.stp"
       (offset (xyz 0 0 0))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
@@ -6219,7 +6219,7 @@
       (solder_mask_margin 0.102) (tstamp 5d846952-17ac-4f2a-95be-1cee9b20a30b))
     (pad "S2" smd rect (at 3.2 -1.25 270) (size 0.4 0.8) (layers "B.Cu" "B.Paste" "B.Mask")
       (solder_mask_margin 0.102) (tstamp 43184f34-2a25-4c47-ba9b-f84943437267))
-    (model "/home/david/projects/the28/pcbs/lib/3dmodels/FFC2B28-10-G.step"
+    (model "/home/david/projects/the26/pcbs/lib/3dmodels/FFC2B28-10-G.step"
       (offset (xyz 0 0 0))
       (scale (xyz 1 1 1))
       (rotate (xyz -90 0 0))
