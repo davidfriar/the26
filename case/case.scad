@@ -32,6 +32,8 @@ gasket_length = 1.5 * kx;
 gasket_thickness = 1.9; // gasket thickness when compressed
 gasket_tab_width = 4;
 
+shelf_width = kx / 8;
+
 insert_hole_diameter = 3.2;
 insert_hole_depth = 4.25;
 insert_hole_mount_diameter = insert_hole_diameter + 3;
@@ -44,7 +46,20 @@ bottom_gasket_height = base_thickness;
 plate_height = bottom_gasket_height + gasket_thickness;
 top_gasket_height = plate_height + plate_thickness;
 
+daughterboard_height = 3;
+daughterboard_thickness = 4.8;
+daughterboard_length = 33.5;
+daughterboard_width = 18;
+
 all();
+
+//  daughterboard();
+
+// color("red") intersection() {
+//   case_lid();
+//   move(daughterboard_position()) up(daughterboard_height)
+//   daughterboard_hole();
+// }
 
 module all() {
   left(100) left_case();
@@ -68,31 +83,63 @@ module case(){
   up(plate_height - (plate_gap + pcb_thickness)) pcb();
   up(top_gasket_height) gaskets(); 
   case_lid();
+  move(daughterboard_position())  up(daughterboard_height)daughterboard();
+  outwards(kx*3/8) fwd(kx*1/8) layout([[middle_bottom().x, outer_thumb().y]], center(key_points())) up(6) battery();
 }
 
 
 module case_lid() {
-  difference() {
-    union() {
-      difference() {
-        up(infinitesmal) case_lid_outside();
-        half_of(v = DOWN, cp = -base_thickness, s = 300) case_lid_inside();
-        keys_holes();
-        intersection() {
-          case_lid_inside(case_thickness = 1.5);
-          linear_extrude(top_gasket_height + gasket_thickness) {
-            intersection() {
-              fillet(1) offset(r = gasket_width) pcb_hole_2d();
-              offset(r = -3) polygon(basic_shape());
-            }
-          }
-        }
-      }
+  difference(){
+    union(){
+      difference(){
+        case_lid_outside();
+        bottom_of_inside();
+        main_hole();
+        gasket_cutouts();
+        plate_cutout();
+        keys_hole();
+        //TODO: check that gasket cutouts don't come too close to the outside
+      } 
       up(base_thickness) insert_hole_mounts();
     }
-    down(infinitesmal) up(base_thickness) insert_holes();
+    up(base_thickness-infinitesmal) insert_holes();
+    //TODO: check that insert holes are deep enough 
   }
 }
+
+module bottom_of_inside(){
+        half_of(v = DOWN, cp = -base_thickness, s = 300) case_lid_inside();
+}
+
+module main_hole(){
+  main_hole= offset(r=-(case_thickness + shelf_width), basic_shape());
+  linear_extrude(height=top_gasket_height+gasket_thickness) polygon(main_hole);
+}
+
+// module case_lid_original() {
+//   difference() {
+//     union() {
+//       difference() {
+//         up(infinitesmal) case_lid_outside();
+//         half_of(v = DOWN, cp = -base_thickness, s = 300) case_lid_inside();
+//         keys_hole();
+//         // daughterboard_hole();
+//         intersection() {
+//           case_lid_inside(case_thickness = 1.5);
+//           linear_extrude(top_gasket_height + gasket_thickness) {
+//             intersection() {
+//               fillet(1) offset(r = gasket_width) pcb_hole_2d();
+//               offset(r = -3) polygon(basic_shape());
+//             }
+//           }
+//         }
+//       }
+//       up(base_thickness) insert_hole_mounts();
+//     }
+//     down(infinitesmal) up(base_thickness) insert_holes();
+//   }
+// }
+
 
 module case_lid_inside(case_thickness=2){
  inside = offset(r=-case_thickness, basic_shape());
@@ -103,7 +150,7 @@ module case_lid_outside(){
   offset_sweep(slice(basic_shape(),1), height = case_height, bottom = os_smooth(joint = kx/8), top=os_smooth(joint = kx * 3/8), steps=16, offset="delta" );
 }
 
-module keys_holes(){
+module keys_hole(){
   linear_extrude(height = case_height+5){
     fillet(1){
       layout(finger_rows(), center(key_points())){
@@ -114,6 +161,27 @@ module keys_holes(){
       }
     }
   }
+}
+
+module gasket_cutouts(){
+  for (g = gaskets(3.75)) {
+    move(g[0]) rot(g[1]) gasket_cutout(g[2]);
+  }
+}
+
+module gasket_cutout(length) {
+  r = gasket_width / 2;
+  linear_extrude(top_gasket_height + gasket_thickness) {
+    hull() {
+      left(length / 2 - r) circle(r);
+      right(length / 2 - r) circle(r);
+    }
+  }
+}
+
+module plate_cutout(){
+  linear_extrude(height = top_gasket_height + gasket_thickness) offset(r = 1)
+    projection() plate();
 }
 
 module insert_hole_mounts(){
@@ -142,11 +210,12 @@ module case_base(){
       up(case_thickness) base_pcb_hole();
       base_holes();
       base_countersink_holes();
+      daughterboard_hole();
     } 
   }
   
-  inwards(1) fwd(kx*3/16) layout([[outermost_bottom().x, outer_thumb().y]], center(key_points())) up(6) daughterboard();
-  outwards(kx*3/8) fwd(kx*1/4) layout([[middle_bottom().x, outer_thumb().y]], center(key_points())) up(6) battery();
+  // move(daughterboard_position())  up(daughterboard_height)daughterboard();
+  // outwards(kx*3/8) fwd(kx*1/4) layout([[middle_bottom().x, outer_thumb().y]], center(key_points())) up(6) battery();
 }
 
 module pcb_hole_2d(){
@@ -167,6 +236,10 @@ module base_countersink_holes(){
   layout_holes(){
     down(1) cylinder(h = base_hole_countersink_depth + 1, d = base_hole_countersink_diameter);
   }
+}
+
+module daughterboard_hole(){
+   move(daughterboard_position())  up(daughterboard_height) cuboid([daughterboard_length+0.5, daughterboard_width+1, daughterboard_thickness+2], anchor=BOTTOM, rounding=0.5 );
 }
 
 module layout(points, center) {
@@ -292,18 +365,14 @@ module layout(points, center) {
   module layout_holes() {
     layout([outer_bottom_corner()], center(key_points())) outwards(kx / 2 + 3)
         fwd(kx / 2 + 3) children();
-    // layout([inner_thumb()], center(key_points())) inwards(0.5 * kx + 3)
-    //     fwd(0.75 * kx + 3) children();
     layout([outer_thumb()], center(key_points())) outwards(0.5 * kx + 3.25)
         fwd(0.75 * kx + 3.5) children();
     layout([outermost_top()], center(key_points())) outwards(0)
-        back(0.5 * kx + 6) children();
-    // layout([inner_top()], center(key_points())) inwards(0.5 * kx + 3)
-    //     back(0.5 * kx + 3) children();
+        back(0.5 * kx + (is_left() ? 6 : 8)) children();
     layout([index_top()], center(key_points())) outwards(1) back(0.5 * kx + 6)
         children();
-    layout([outermost_bottom()], center(key_points())) outwards(kx / 2 + 3.5)
-        fwd(kx / 2 + 5) children();
+    // layout([outermost_bottom()], center(key_points())) outwards(kx / 2 + 3.5)
+    //     fwd(kx / 2 + 5) children();
     layout([inner_thumb()], center(key_points())) inwards(kx / 2 + 3.25)
         fwd(kx * 3 / 4 + 3.25) children();
     layout([inner_top()], center(key_points())) inwards(kx / 2 + 3)
@@ -413,6 +482,10 @@ function pcb_center() =
    [size.x/2, size.y/2];
 function pcb_svg() = is_left()? "pcbs/left_pcb.svg" : "pcbs/right_pcb.svg";
 function pcb_stl() = is_left()? "pcbs/left_pcb.stl" : "pcbs/right_pcb.stl";
+
+// inwards(1) fwd(kx*3/16) layout([[outermost_bottom().x, outer_thumb().y]], center(key_points()))
+function daughterboard_position() = 
+  move(-center(key_points()), inwards(-1.5, fwd(kx*3/16, [outermost_bottom().x, outer_thumb().y])) );
 
 function corner_points() =  [
     back(kx,inwards(kx,inner_top())), 
