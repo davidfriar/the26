@@ -66,6 +66,8 @@ usb_hole_clearance = 0.25;
 battery_size = [ 17.5, 30.5, 7 ];
 
 all();
+// $side = "right";
+
 // daughterboard_holder();
 
 // color("red") intersection() {
@@ -73,7 +75,7 @@ all();
 //   daughterboard();
 // }
 
-logo();
+// logo();
 //  daughterboard();
 
 // color("red") intersection() {
@@ -82,7 +84,14 @@ logo();
 //   daughterboard_hole();
 // }
 
-module logo() { linear_extrude(height = 1) import("../art/the26small.svg"); }
+module logo() {
+  right(kx * 2 / 4) fwd(kx / 2) layout(
+      [midpoint([
+        outer_bottom_corner(), [ inner_thumb().x, outer_bottom_corner().y ]
+      ])],
+      center(key_points())) down(infinitesmal) scale([ 0.75, 0.75, 1 ])
+      linear_extrude(height = 0.75) yrot(180) import("../art/the26small.svg");
+}
 
 module all() {
   left(100) left_case();
@@ -101,14 +110,18 @@ module right_case() {
 
 module case(){
   *case_base();
-  *up(bottom_gasket_height) gaskets(); 
-  *up(plate_height)plate();
-  *up(plate_height - (plate_gap + pcb_thickness)) pcb();
-  *up(top_gasket_height) gaskets(); 
+  up(bottom_gasket_height) gaskets(); 
+  up(plate_height)plate();
+  up(plate_height - (plate_gap + pcb_thickness)) pcb();
+  up(top_gasket_height) gaskets(); 
   case_lid();
   daughterboard();
   battery();
   color("slategrey") daughterboard_holder();
+
+
+   
+
 }
 
 
@@ -122,7 +135,7 @@ module case_lid() {
         gasket_cutouts();
         plate_cutout();
         keys_hole();
-        //TODO: check that gasket cutouts don't come too close to the outside
+        battery_hole();
       } 
       up(base_thickness) insert_hole_mounts();
       intersection(){
@@ -133,10 +146,8 @@ module case_lid() {
     up(base_thickness-infinitesmal) insert_holes();
     daughterboard_cutout();
     usb_hole();
-    battery_hole();
-
-    //TODO: check that insert holes are deep enough 
   }
+  pillar();
 }
 
 module bottom_of_inside(){
@@ -168,7 +179,8 @@ module daughterboard_mount(){
       height
     ]) linear_extrude(height = height) fwd(shift)
         outwards(insert_hole_mount_diameter / 4)
-            rect([ daughterboard_mount_length, mount_width ], rounding = 1);
+            rect([ daughterboard_mount_length, mount_width ],
+                 rounding = [ 1, 1, 0, 0 ]);
   }
 
   module daughterboard_cutout() {
@@ -270,7 +282,7 @@ module daughterboard_mount(){
     }
   }
 
-  module gasket_cutout(length) {
+  module old_gasket_cutout(length) {
     r = gasket_width / 2;
     linear_extrude(top_gasket_height + gasket_thickness) {
       hull() {
@@ -278,6 +290,18 @@ module daughterboard_mount(){
         right(length / 2 - r) circle(r);
       }
     }
+  }
+
+  module gasket_cutout(length) {
+    r = gasket_width / 2;
+    height = top_gasket_height + gasket_thickness;
+    c1 = left(length / 2 - r, circle(r));
+    c2 = right(length / 2 - r, circle(r));
+    points = concat(c1, c2);
+    hull = hull(points);
+    path = [for (i = hull) points[i]];
+    offset_sweep(path = path, height = height, top = os_circle(r = 1),
+                 steps = 8);
   }
 
   module plate_cutout() {
@@ -297,6 +321,13 @@ module daughterboard_mount(){
     cylinder(h = insert_hole_depth, d = insert_hole_diameter);
   }
 
+  module pillar() {
+    up(base_thickness) fwd(kx - 2)
+        layout([middle_bottom()], center(key_points()))
+            cuboid([ 8, 8, ceiling_height - base_thickness ], rounding = 1,
+                   except = [ TOP, BOTTOM ], anchor = BOTTOM);
+  }
+
   module case_base() {
     color("darkslategrey") {
       difference() {
@@ -309,7 +340,16 @@ module daughterboard_mount(){
         daughterboard_hole();
         battery_hole();
         up(infinitesmal) daughterboard_holder(with_holes = false);
+        logo();
+        button_hole();
       }
+    }
+  }
+
+  module button_hole() {
+    outwards(4) move(daughterboard_position()) {
+      down(4) cylinder(d = 4.5, h = 10, anchor = BOTTOM);
+      cuboid([ 8, 8, 4 ], rounding = 1);
     }
   }
 
@@ -318,7 +358,15 @@ module daughterboard_mount(){
         import(pcb_svg());
   }
 
-  module base_pcb_hole() { linear_extrude(height = 10) pcb_hole_2d(); }
+  module base_pcb_hole() {
+    linear_extrude(height = 10) pcb_hole_2d();
+    if (!is_left()) {
+
+      layout([outermost_bottom()], center(key_points())) inwards(kx * 4 / 8)
+          fwd(kx * 5 / 8 - 1) linear_extrude(height = 10)
+              rect([ 4, 2 ], anchor = BOTTOM, rounding = -1);
+    }
+  }
 
   module base_holes() {
     layout_holes(base = true) {
@@ -333,8 +381,7 @@ module daughterboard_mount(){
     }
   }
 
-  module daughterboard_hole() { // TODO: may need changing because daughterboard
-                                // position includes z
+  module daughterboard_hole() {
     move(daughterboard_position()) cuboid(
         [
           daughterboard_length + 0.5 + infinitesmal, daughterboard_width + 1,
@@ -476,9 +523,14 @@ module daughterboard_mount(){
     width = battery_size.y + 1;
     height = ceiling_height - daughterboard_height + infinitesmal;
 
-    up(daughterboard_height) layout([position], center(key_points()))
-        cuboid([ length, width, height ], rounding = 0,
-               anchor = FRONT + BOTTOM + (is_left() ? RIGHT : LEFT));
+    layout([position], center(key_points())) {
+      up(daughterboard_height)
+          cuboid([ length, width, height ],
+                 anchor = FRONT + BOTTOM + (is_left() ? RIGHT : LEFT));
+      up(base_thickness + infinitesmal) inwards(kx / 8 + 0.5) cuboid(
+          [ length + kx / 4, shelf_width, ceiling_height - base_thickness ],
+          anchor = FRONT + BOTTOM + (is_left() ? RIGHT : LEFT));
+    }
   }
 
   module keycaps() {
