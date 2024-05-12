@@ -1,5 +1,7 @@
-openscad -o output/left-plate.svg plate.scad
-openscad -D '$side="right"' -o output/right-plate.svg plate.scad
-sed -i -e 's/fill="[^"]*"/fill="none"/' -e 's/stroke-width="[^"]*"/stroke-width="0.09"/' output/left-plate.svg
-sed -i -e 's/fill="[^"]*"/fill="none"/' -e 's/stroke-width="[^"]*"/stroke-width="0.09"/' output/right-plate.svg
+openscad -o output/left-plate.svg plate.scad && sed -i -e 's/fill="[^"]*"/fill="none"/' -e 's/stroke-width="[^"]*"/stroke-width="0.09"/' output/left-plate.svg
+openscad -D '$side="right"' -o output/right-plate.svg plate.scad && sed -i -e 's/fill="[^"]*"/fill="none"/' -e 's/stroke-width="[^"]*"/stroke-width="0.09"/' output/right-plate.svg
 
+openscad -o output/the26-left-base.stl base.scad &
+openscad -D '$side="right"' -o output/the26-right-base.stl base.scad &
+openscad -o output/the26-left-lid.stl lid.scad &
+openscad -D '$side="right"' -o output/the26-right-lid.stl lid.scad &

@@ -8,7 +8,7 @@ include<pcbs/left_pcb_dimensions.scad>;
 include<pcbs/right_pcb_dimensions.scad>;
 
 // clang-format on
-$fn = 32;
+$fn = 64;
 $side = "left";
 kx = 18;
 ky = 17;
@@ -64,25 +64,6 @@ usb_hole_width = 9;
 usb_hole_clearance = 0.25;
 
 battery_size = [ 17.5, 30.5, 7 ];
-
-all();
-// $side = "right";
-
-// daughterboard_holder();
-
-// color("red") intersection() {
-//   case_lid();
-//   daughterboard();
-// }
-
-// logo();
-//  daughterboard();
-
-// color("red") intersection() {
-//   case_lid();
-//   move(daughterboard_position()) up(daughterboard_height)
-//   daughterboard_hole();
-// }
 
 module logo() {
   right(kx * 2 / 4) fwd(kx / 2) layout(
@@ -151,7 +132,8 @@ module case_lid() {
 }
 
 module bottom_of_inside(){
-        half_of(v = DOWN, cp = -base_thickness, s = 300) case_lid_inside();
+  $fn=32;
+  half_of(v = DOWN, cp = -base_thickness, s = 300) case_lid_inside();
 }
 
 module main_hole(){
