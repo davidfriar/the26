@@ -65,6 +65,8 @@ usb_hole_clearance = 0.25;
 
 battery_size = [ 17.5, 30.5, 7 ];
 
+// all();
+
 module logo() {
   right(kx * 2 / 4) fwd(kx / 2) layout(
       [midpoint([
@@ -90,15 +92,15 @@ module right_case() {
 }
 
 module case(){
-  *case_base();
-  up(bottom_gasket_height) gaskets(); 
-  up(plate_height)plate();
-  up(plate_height - (plate_gap + pcb_thickness)) pcb();
-  up(top_gasket_height) gaskets(); 
-  case_lid();
+  case_base();
+  *up(bottom_gasket_height) gaskets(); 
+  *up(plate_height)plate();
+  *up(plate_height - (plate_gap + pcb_thickness)) pcb();
+  *up(top_gasket_height) gaskets(); 
+  *case_lid();
   daughterboard();
-  battery();
-  color("slategrey") daughterboard_holder();
+  *battery();
+  color("orange") daughterboard_holder();
 
 
    
@@ -364,12 +366,24 @@ module daughterboard_mount(){
   }
 
   module daughterboard_hole() {
-    move(daughterboard_position()) cuboid(
-        [
-          daughterboard_length + 0.5 + infinitesmal, daughterboard_width + 1,
-          daughterboard_thickness + 2
-        ],
-        anchor = BOTTOM, rounding = 0);
+    move(daughterboard_position()) {
+      cuboid(
+          [
+            daughterboard_length + 0.5 + infinitesmal, daughterboard_width + 1,
+            daughterboard_thickness + 2
+          ],
+          anchor = BOTTOM, rounding = 0);
+
+      ycopies(daughterboard_width - 2.5)
+          xcyl(l = daughterboard_length, r = 1.25, rounding = 1.25);
+
+      inwards(daughterboard_length / 4 + 1.5) down(1.5) cuboid(
+          [
+            daughterboard_length / 2 - 1, daughterboard_width + 1,
+            daughterboard_thickness + 2
+          ],
+          anchor = BOTTOM, rounding = 1);
+    }
   }
 
   module layout(points, center) {
